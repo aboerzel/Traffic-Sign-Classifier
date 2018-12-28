@@ -9,6 +9,7 @@ from keras.layers.core import Activation
 from keras.layers.core import Flatten
 from keras.layers.core import Dense
 from keras import backend as K
+from keras.optimizers import SGD, Adam
 
 
 class LeNet:
@@ -68,8 +69,12 @@ X_test, y_test = test['features'], test['labels']
 classes = len(np.unique(y_train))
 
 model = LeNet.build(classes)
+opt = SGD(lr=0.01)
+optimizer = Adam(lr=1e-4, clipnorm=0.001)
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 model.fit(X_train, y_train, validation_data=(X_valid, y_valid), batch_size=64, epochs=42)
+
+model.sa
 
 y_pred = model.predict(X_test)
