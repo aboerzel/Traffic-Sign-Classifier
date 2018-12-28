@@ -1,16 +1,16 @@
 # import the necessary packages
 import pickle
 
+import Augmentor
 import keras
 import numpy as np
-from keras.layers import AveragePooling2D
+from keras.layers import MaxPooling2D
 from keras.layers.convolutional import Conv2D
 from keras.layers.core import Dense
 from keras.layers.core import Dropout
 from keras.layers.core import Flatten
 from keras.models import Sequential
 from keras.optimizers import SGD, Adam
-from keras.preprocessing.image import ImageDataGenerator
 
 
 class LeNet:
@@ -24,8 +24,7 @@ class LeNet:
 
         # Layer 2
         # Pooling Layer 1 => 14x14x6
-        # model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(AveragePooling2D())
+        model.add(MaxPooling2D(pool_size=(2, 2)))
 
         # Layer 3
         # Conv Layer 2 => 10x10x16
@@ -33,9 +32,7 @@ class LeNet:
 
         # Layer 4
         # Pooling Layer 2 => 5x5x16
-        # model.add(MaxPooling2D(pool_size=2, strides=2))
-        # model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(AveragePooling2D())
+        model.add(MaxPooling2D(pool_size=2, strides=2))
 
         # Flatten
         model.add(Flatten())
@@ -81,22 +78,29 @@ x_train /= 255
 classes = len(np.unique(y_train))
 y_train = keras.utils.to_categorical(y_train, classes)
 
-datagen = ImageDataGenerator(
-    featurewise_center=True,
-    featurewise_std_normalization=True,
-    rotation_range=20,
-    width_shift_range=0.2,
-    height_shift_range=0.2,
-    zoom_range=0.2,
-    data_format='channels_last')
+p = Augmentor.Pipeline()
+p.skew(probability=0.5, magnitude=0.1)
+p.zoom(probability=0.5, min_factor=0.8, max_factor=1.2)
+p.rotate(probability=0.8, max_left_rotation=5, max_right_rotation=5)
 
-datagen.fit(X_train)
+datagen1 = p.keras_generator_from_array(X_train, y_train, batch_size=32)
+
+# datagen = ImageDataGenerator(
+# #     featurewise_center=True,
+# #     featurewise_std_normalization=True,
+# #     rotation_range=20,
+# #     width_shift_range=0.2,
+# #     height_shift_range=0.2,
+# #     zoom_range=0.2,
+# #     data_format='channels_last')
+
+#datagen1.fit(X_train)
 
 model = LeNet.build(classes)
 opt = SGD(lr=0.01)
 sgd = SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
 optimizer = Adam(lr=1e-4, clipnorm=0.001)
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
 
 # The function to optimize is the cross entropy between the true label and the output (softmax) of the model
 # We will use adadelta to do the gradient descent see http://cs231n.github.io/neural-networks-3/#ada
@@ -104,6 +108,6 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 
 # model.compile(loss=keras.losses.categorical_crossentropy, optimizer=’SGD’, metrics=[“accuracy”])
 
-model.fit_generator(datagen.flow(X_train, y_train, batch_size=32), steps_per_epoch=len(X_train) / 32, epochs=42)
+model.fit_generator(datagen1, steps_per_epoch=len(X_train) / 32, epochs=100)
 
 y_pred = model.predict(X_test)
