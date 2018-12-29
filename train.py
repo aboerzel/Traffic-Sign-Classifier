@@ -97,7 +97,7 @@ def load_signnames_from_csv(filename):
 
 sign_names = load_signnames_from_csv('signnames.csv')
 
-# prepare data for network
+# prepare data for training with LeNet
 X_train = X_train.reshape((X_train.shape[0], 32, 32, 3))
 x_train = X_train.astype('float32') / 255
 
@@ -214,5 +214,5 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend()
-plt.savefig('./output/train-history.png')
+plt.savefig('./output/training-loss-and-accuracy.png')
 plt.show()
