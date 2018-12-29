@@ -4,12 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-import keras
-import tensorflow as tf
-
-# print(tf.__version__)
-# print(keras.__version__)
-
 training_file = '../data/train.p'
 validation_file = '../data/valid.p'
 testing_file = '../data/test.p'
@@ -31,14 +25,16 @@ labels = np.unique(y_train)
 train_grouped = np.array([list(X_train[y_train[0:] == i]) for i in labels])
 
 # show image of 10 random data points
-fig, axs = plt.subplots(len(labels), 5, figsize=(10, 200))
-#fig.subplots_adjust(hspace=.2, wspace=.001)
+n_rows = len(labels)
+n_cols = 10
+fig, axs = plt.subplots(n_rows, n_cols, figsize=(15, 200))
+fig.subplots_adjust(hspace=0.3)
 axs = axs.ravel()
-for l in labels:
-    group = train_grouped[l]
-    for i in range(5):
-        image = group[random.randint(0, len(group)-1)]
-        index = l * 5 + i
+for row in range(0, n_rows):
+    group = train_grouped[row]
+    for col in range(n_cols):
+        image = group[random.randint(0, len(group) - 1)]
+        index = col + row * n_cols
         axs[index].axis('off')
         axs[index].imshow(image)
         axs[index].set_title(y_train[index])
