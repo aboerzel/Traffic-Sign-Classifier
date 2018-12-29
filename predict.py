@@ -1,12 +1,11 @@
 import csv
+import glob
 import os
 
 import cv2
 import numpy as np
 from keras.models import load_model
 import matplotlib.pyplot as plt
-
-filename = "image2.jpg"
 
 
 # load class-ids and sign names from csv file
@@ -25,12 +24,18 @@ def load_signnames_from_csv(filename):
 
 sign_names = load_signnames_from_csv('signnames.csv')
 
-# read image file an preprocess image
-image = cv2.imread(os.path.join('test_images', filename))
-image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-resized_image = cv2.resize(image, (32, 32), interpolation=cv2.INTER_AREA)
+# read image file an preprocess images
+original_images = []
+X_test = []
+filenames = glob.glob('./test_images/*.jpg')
+for filename in filenames:
+    image = cv2.imread(filename)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    original_images.append(image)
+    resized_image = cv2.resize(image, (32, 32), interpolation=cv2.INTER_AREA)
+    X_test.append(resized_image)
 
-X_test = np.array([resized_image])
+X_test = np.array(X_test)
 X_test = X_test.astype('float32') / 255
 
 # load traind model
@@ -38,11 +43,22 @@ model = load_model('./output/traffic_sings_model.h5')
 
 # predict
 y_pred = model.predict(X_test)
-class_name = sign_names[y_pred.argmax(axis=-1)[0]][1]
 
-print("{} => {}".format(filename, class_name))
+# print class predictions
+num_files = int(len(filenames))
+cols = 5
+rows = int(num_files / cols)
+if num_files % cols > 0:
+    rows += 1
 
-plt.imshow(image)
-plt.title(class_name)
+fig, axs = plt.subplots(rows, cols, figsize=(10, 200))
+axs = axs.ravel()
+
+for i, (filename, image, org_image) in enumerate(zip(filenames, X_test, original_images)):
+    class_name = sign_names[y_pred.argmax(axis=-1)[i]][1]
+    print("{} => {}".format(filename, class_name))
+    axs[i].axis('off')
+    axs[i].imshow(org_image)
+    axs[i].set_title(class_name)
+
 plt.show()
-
