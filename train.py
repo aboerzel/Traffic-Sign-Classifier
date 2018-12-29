@@ -114,8 +114,8 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # image augmentation (https://augmentor.readthedocs.io/en/master/)
 p = Augmentor.Pipeline()
-p.skew(probability=0.5, magnitude=0.1)
-p.zoom(probability=0.5, min_factor=0.8, max_factor=1.2)
+p.skew(probability=0.8, magnitude=0.1)
+p.zoom(probability=0.8, min_factor=0.8, max_factor=1.2)
 p.rotate(probability=0.8, max_left_rotation=5, max_right_rotation=5)
 
 datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
