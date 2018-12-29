@@ -5,21 +5,23 @@ import pickle
 import Augmentor
 import keras
 import numpy as np
+import matplotlib.pyplot as plt
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import MaxPooling2D
 from keras.layers.convolutional import Conv2D
 from keras.layers.core import Dense
 from keras.layers.core import Dropout
 from keras.layers.core import Flatten
 from keras.models import Sequential
-from keras.optimizers import SGD, Adam
+from keras.optimizers import SGD, Adam, RMSprop, Adagrad, Adadelta
 
+# training hyperparameter
 batch_size = 64
-
-# optimizer = SGD(lr=0.01)
-# optimizer = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-optimizer = Adam(lr=1e-4, clipnorm=0.001)
+num_epochs = 100
+optimizer_method = 'adagrad'
 
 
+# LeNet model architecture
 class LeNet:
     @staticmethod
     def build(num_classes):
@@ -63,6 +65,7 @@ class LeNet:
         return model
 
 
+# load train, validation an test dataset
 training_file = '../data/train.p'
 validation_file = '../data/valid.p'
 testing_file = '../data/test.p'
@@ -79,7 +82,7 @@ X_valid, y_valid = valid['features'], valid['labels']
 X_test, y_test = test['features'], test['labels']
 
 
-# load classes and sign names from csv file
+# load class-ids and sign names from csv file
 def load_signnames_from_csv(filename):
     rows = []
     with open(filename) as csvfile:
@@ -111,6 +114,7 @@ y_valid = keras.utils.to_categorical(y_valid, num_classes)
 y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # image augmentation
+# https://augmentor.readthedocs.io/en/master/
 p = Augmentor.Pipeline()
 p.skew(probability=0.5, magnitude=0.1)
 p.zoom(probability=0.5, min_factor=0.8, max_factor=1.2)
@@ -121,11 +125,98 @@ datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
 # build LeNet model
 model = LeNet.build(num_classes)
 
-# The function to optimize is the cross entropy between the true label and the output (softmax) of the model
-model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+
+def get_optimizer(optimizer_method):
+    if optimizer_method == "sdg":
+        return SGD(lr=1e-2, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)
+    if optimizer_method == "rmsprop":
+        return RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
+    if optimizer_method == "adam":
+        return Adam(lr=0.001, decay=0.001 / num_epochs)
+        # Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+    if optimizer_method == "adagrad":
+        return Adagrad(lr=0.01, epsilon=1e-08, decay=0.0)
+    if optimizer_method == "adadelta":
+        return Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0)
+
+
+# https://medium.com/algoscale/how-to-plot-the-model-training-in-keras-using-custom-callback-function-and-using-tensorboard-41e4ce3cb401
+class TrainingPlot(keras.callbacks.Callback):
+
+    # This function is called when the training begins
+    def on_train_begin(self, logs={}):
+        # Initialize the lists for holding the logs, losses and accuracies
+        self.losses = []
+        self.acc = []
+        self.val_losses = []
+        self.val_acc = []
+        self.logs = []
+
+    # This function is called at the end of each epoch
+    def on_epoch_end(self, epoch, logs={}):
+        # Append the logs, losses and accuracies to the lists
+        self.logs.append(logs)
+        self.losses.append(logs.get('loss'))
+        self.acc.append(logs.get('acc'))
+        self.val_losses.append(logs.get('val_loss'))
+        self.val_acc.append(logs.get('val_acc'))
+
+        # Before plotting ensure at least 2 epochs have passed
+        if len(self.losses) > 1:
+            N = np.arange(0, len(self.losses))
+            # You can chose the style of your preference
+            # print(plt.style.available) to see the available options
+            # plt.style.use("seaborn")
+            # Plot train loss, train acc, val loss and val acc against epochs passed
+            plt.figure()
+            plt.plot(N, self.losses, label="train_loss")
+            plt.plot(N, self.acc, label="train_acc")
+            plt.plot(N, self.val_losses, label="val_loss")
+            plt.plot(N, self.val_acc, label="val_acc")
+            plt.title("Training Loss and Accuracy [Epoch {}]".format(epoch))
+            plt.xlabel("Epoch #")
+            plt.ylabel("Loss/Accuracy")
+            plt.legend()
+            # Make sure there exists a folder called output in the current directory
+            # or replace 'output' with whatever direcory you want to put in the plots
+            plt.savefig('output/Epoch-{}.png'.format(epoch))
+            plt.close()
+
+
+def get_callbacks():
+    callbacks = [
+        EarlyStopping(monitor='loss', min_delta=0.01, patience=5, mode='min', verbose=1),
+        TrainingPlot(),
+        ReduceLROnPlateau(monitor='loss', factor=0.1, patience=2, verbose=1, mode='auto', epsilon=1e-4, cooldown=0,
+                          min_lr=0)]
+    return callbacks
+
+
+# the function to optimize is the cross entropy between the true label and the output (softmax) of the model
+model.compile(optimizer=get_optimizer(optimizer_method), loss='categorical_crossentropy', metrics=['accuracy'])
 
 # train model
-model.fit_generator(datagen, validation_data=(X_valid, y_valid), steps_per_epoch=len(X_train) / batch_size, epochs=100)
+H = model.fit_generator(datagen,
+                        validation_data=(X_valid, y_valid),
+                        steps_per_epoch=len(X_train) / batch_size,
+                        callbacks=get_callbacks(),
+                        epochs=num_epochs)
+
+# save trained model
+model.save('./output/traffic_sings_model.h5')
+
+# plot the training loss and accuracy
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(np.arange(0, 20), H.history["loss"], label="train_loss")
+plt.plot(np.arange(0, 20), H.history["val_loss"], label="val_loss")
+plt.plot(np.arange(0, 20), H.history["acc"], label="train_acc")
+plt.plot(np.arange(0, 20), H.history["val_acc"], label="val_acc")
+plt.title("Training Loss and Accuracy")
+plt.xlabel("Epoch #")
+plt.ylabel("Loss/Accuracy")
+plt.legend()
+plt.show()
 
 # predict
 y_pred = model.predict(X_test)
