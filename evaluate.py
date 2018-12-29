@@ -34,7 +34,7 @@ sign_names = load_signnames_from_csv('signnames.csv')
 X_test = X_test.reshape((X_test.shape[0], 32, 32, 3))
 X_test = X_test.astype('float32') / 255
 
-num_classes = 43
+num_classes = len(sign_names)
 y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # load traind model
@@ -43,7 +43,7 @@ model = load_model('./output/traffic_sings_model.h5')
 # predict
 y_pred = model.predict(X_test)
 
-# show the true and the predicted classes for the test dataset
+# show the true and the predicted classes for a couple of items of the test dataset
 min = 30
 count = 20
 for i, (y_t, y_p) in enumerate(zip(y_test[min:min+count], y_pred[min:min+count])):
