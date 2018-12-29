@@ -16,6 +16,8 @@ from keras.models import Sequential
 from keras.optimizers import SGD, Adam, RMSprop, Adagrad, Adadelta
 
 # training hyperparameter
+from keras.preprocessing.image import ImageDataGenerator
+
 batch_size = 64
 num_epochs = 100
 optimizer_method = 'adagrad'
@@ -120,7 +122,18 @@ p.skew(probability=0.5, magnitude=0.1)
 p.zoom(probability=0.5, min_factor=0.8, max_factor=1.2)
 p.rotate(probability=0.8, max_left_rotation=5, max_right_rotation=5)
 
-datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
+#datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
+
+datagen = ImageDataGenerator(
+    featurewise_center=True,
+    featurewise_std_normalization=True,
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    zoom_range=0.2,
+    data_format='channels_last')
+datagen.fit(X_train)
+datagen = datagen.flow(X_train, y_train, batch_size=batch_size)
 
 # build LeNet model
 model = LeNet.build(num_classes)
@@ -185,7 +198,7 @@ class TrainingPlot(keras.callbacks.Callback):
 
 def get_callbacks():
     callbacks = [
-        EarlyStopping(monitor='loss', min_delta=0.01, patience=5, mode='min', verbose=1),
+        EarlyStopping(monitor='loss', min_delta=0, patience=5, mode='auto', verbose=1),
         TrainingPlot(),
         ReduceLROnPlateau(monitor='loss', factor=0.1, patience=2, verbose=1, mode='auto', epsilon=1e-4, cooldown=0,
                           min_lr=0)]
@@ -216,6 +229,7 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend()
+plt.savefig('./output/train-history.png')
 plt.show()
 
 # predict
