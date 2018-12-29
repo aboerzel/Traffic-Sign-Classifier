@@ -1,4 +1,3 @@
-# import the necessary packages
 import csv
 import pickle
 
@@ -18,7 +17,7 @@ from keras.optimizers import SGD, Adam, RMSprop, Adagrad, Adadelta
 # training hyperparameter
 batch_size = 64
 num_epochs = 100
-optimizer_method = 'adagrad'
+optimizer_method = 'sdg'
 
 
 # LeNet model architecture
@@ -218,10 +217,3 @@ plt.ylabel("Loss/Accuracy")
 plt.legend()
 plt.savefig('./output/train-history.png')
 plt.show()
-
-# predict
-y_pred = model.predict(X_test)
-
-# show the true and predicted class for the test dataset
-for i in range(len(y_test)):
-    print("{:4d} : True={}, Predicted={}".format(i, y_test[i], y_pred[i]))
