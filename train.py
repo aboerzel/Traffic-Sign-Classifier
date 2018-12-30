@@ -193,9 +193,6 @@ X_test = X_test.astype('float32') / 255
 
 datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
 
-# build LeNet model
-model = MiniVGGNet.build(num_classes)
-
 
 def get_optimizer(optimizer_method):
     if optimizer_method == "sdg":
@@ -221,6 +218,24 @@ def get_callbacks(optimizer_method):
     return callbacks
 
 
+def plot_train_history(H):
+    plt.style.use("ggplot")
+    plt.figure()
+    plt.plot(np.arange(0, len(H.history["loss"])), H.history["loss"], label="train_loss")
+    plt.plot(np.arange(0, len(H.history["val_loss"])), H.history["val_loss"], label="val_loss")
+    plt.plot(np.arange(0, len(H.history["acc"])), H.history["acc"], label="train_acc")
+    plt.plot(np.arange(0, len(H.history["val_acc"])), H.history["val_acc"], label="val_acc")
+    plt.title("Training Loss and Accuracy")
+    plt.xlabel("Epoch #")
+    plt.ylabel("Loss/Accuracy")
+    plt.legend()
+    plt.savefig('./output/training-loss-and-accuracy_{}.png'.format(optimizer_method))
+    plt.show()
+
+
+# build model
+model = MiniVGGNet.build(num_classes)
+
 # the function to optimize is the cross entropy between the true label and the output (softmax) of the model
 model.compile(optimizer=get_optimizer(optimizer_method), loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -232,15 +247,4 @@ H = model.fit_generator(datagen,
                         epochs=num_epochs)
 
 # plot and save the training loss and accuracy
-plt.style.use("ggplot")
-plt.figure()
-plt.plot(np.arange(0, len(H.history["loss"])), H.history["loss"], label="train_loss")
-plt.plot(np.arange(0, len(H.history["val_loss"])), H.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, len(H.history["acc"])), H.history["acc"], label="train_acc")
-plt.plot(np.arange(0, len(H.history["val_acc"])), H.history["val_acc"], label="val_acc")
-plt.title("Training Loss and Accuracy")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss/Accuracy")
-plt.legend()
-plt.savefig('./output/training-loss-and-accuracy_{}.png'.format(optimizer_method))
-plt.show()
+plot_train_history(H)
