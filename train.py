@@ -6,6 +6,8 @@ import cv2
 import keras
 import matplotlib.pyplot as plt
 import numpy as np
+import skimage.morphology as morp
+from skimage.filters import rank
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from keras.layers import MaxPooling2D, Activation, BatchNormalization
 from keras.layers.convolutional import Conv2D
@@ -156,6 +158,18 @@ X_train = to_grayscale(X_train)
 X_valid = to_grayscale(X_valid)
 X_test = to_grayscale(X_test)
 
+
+# apply local histogram equalization
+def local_histogram_equalization(image):
+    kernel = morp.disk(30)
+    img_local = rank.equalize(image, selem=kernel)
+    return img_local
+
+
+X_train = np.array(list(map(local_histogram_equalization, X_train)))
+X_valid = np.array(list(map(local_histogram_equalization, X_valid)))
+X_test = np.array(list(map(local_histogram_equalization, X_test)))
+
 # convert class vectors to binary class matrices.
 y_train = keras.utils.to_categorical(y_train, num_classes)
 y_valid = keras.utils.to_categorical(y_valid, num_classes)
@@ -163,9 +177,9 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # image augmentation (https://augmentor.readthedocs.io/en/master/)
 p = Augmentor.Pipeline()
-p.skew(probability=0.8, magnitude=0.1)
 p.zoom(probability=0.8, min_factor=0.8, max_factor=1.2)
 p.rotate(probability=0.8, max_left_rotation=5, max_right_rotation=5)
+p.skew(probability=0.8, magnitude=0.1)
 
 # reshape data for training with LeNet
 X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
