@@ -58,18 +58,17 @@ X_test = X_test.astype('float32') / 255
 # load trained model
 model = load_model('./output/traffic_sings_model_{}.h5'.format(optimizer_method))
 
-# predict
-y_pred = model.predict(X_test)
+# print loss and accuracy of the trained model
+loss, acc = model.evaluate(X_test, y_test, batch_size=64)
+print('Loss:     {:.2f}%'.format(loss * 100))
+print('Accuracy: {:.2f}%'.format(acc * 100))
 
 # show the true and the predicted classes for a couple of items of the test dataset
+y_pred = model.predict(X_test)
+
 min = 30
 count = 20
 for i, (y_t, y_p) in enumerate(zip(y_test[min:min + count], y_pred[min:min + count])):
     print("{:4d} : True={: <2}  Predicted={: <2}  {}"
           .format(i + min, y_t.argmax(axis=-1), y_p.argmax(axis=-1),
                   y_t.argmax(axis=-1) == y_p.argmax(axis=-1)))
-
-# evaluate model
-loss, acc = model.evaluate(X_test, y_test, batch_size=64)
-print('Loss:     {:.2f}%'.format(loss * 100))
-print('Accuracy: {:.2f}%'.format(acc * 100))
