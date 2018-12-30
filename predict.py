@@ -4,8 +4,6 @@ import glob
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import skimage.morphology as morp
-from skimage.filters import rank
 from keras.models import load_model
 
 # hyperparameter for evaluation
