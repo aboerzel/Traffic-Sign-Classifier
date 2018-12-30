@@ -178,8 +178,8 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 # image augmentation (https://augmentor.readthedocs.io/en/master/)
 p = Augmentor.Pipeline()
 p.zoom(probability=0.8, min_factor=0.8, max_factor=1.2)
-p.rotate(probability=0.8, max_left_rotation=5, max_right_rotation=5)
-p.skew(probability=0.8, magnitude=0.1)
+p.rotate(probability=0.8, max_left_rotation=15, max_right_rotation=15)
+p.skew(probability=0.8, magnitude=0.2)
 
 # reshape data for training with LeNet
 X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
@@ -187,7 +187,7 @@ X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
 X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
 
 # normalize data from 0.0 to 1.0
-x_train = X_train.astype('float32') / 255
+X_train = X_train.astype('float32') / 255
 X_valid = X_valid.astype('float32') / 255
 X_test = X_test.astype('float32') / 255
 
@@ -234,7 +234,7 @@ def plot_train_history(H):
 
 
 # build model
-model = MiniVGGNet.build(num_classes)
+model = LeNet.build(num_classes)
 
 # the function to optimize is the cross entropy between the true label and the output (softmax) of the model
 model.compile(optimizer=get_optimizer(optimizer_method), loss='categorical_crossentropy', metrics=['accuracy'])
