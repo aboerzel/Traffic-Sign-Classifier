@@ -66,9 +66,11 @@ print('Accuracy: {:.2f}%'.format(acc * 100))
 # show the true and the predicted classes for a couple of items of the test dataset
 y_pred = model.predict(X_test)
 
-min = 30
+print()
+
+start = 110
 count = 20
-for i, (y_t, y_p) in enumerate(zip(y_test[min:min + count], y_pred[min:min + count])):
+for i, (y_t, y_p) in enumerate(zip(y_test[start:start + count], y_pred[start:start + count])):
     print("{:4d} : True={: <2}  Predicted={: <2}  {}"
-          .format(i + min, y_t.argmax(axis=-1), y_p.argmax(axis=-1),
+          .format(i + start, y_t.argmax(axis=-1), y_p.argmax(axis=-1),
                   y_t.argmax(axis=-1) == y_p.argmax(axis=-1)))
