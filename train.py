@@ -214,7 +214,7 @@ model.compile(optimizer=get_optimizer(optimizer_method), loss='categorical_cross
 H = model.fit_generator(datagen,
                         validation_data=(X_valid, y_valid),
                         steps_per_epoch=len(X_train) / batch_size,
-                        callbacks=get_callbacks(),
+                        callbacks=get_callbacks(optimizer_method),
                         epochs=num_epochs)
 
 # plot and save the training loss and accuracy
