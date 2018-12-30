@@ -180,7 +180,7 @@ X_test = X_test.astype('float32') / 255
 datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
 
 # build LeNet model
-model = LeNet.build(num_classes)
+model = MiniVGGNet.build(num_classes)
 
 
 def get_optimizer(optimizer_method):
