@@ -4,6 +4,8 @@ import glob
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import skimage.morphology as morp
+from skimage.filters import rank
 from keras.models import load_model
 
 # hyperparameter for evaluation
@@ -40,6 +42,16 @@ for filename in filenames:
     X_test.append(resized_image)
 
 X_test = np.array(X_test)
+
+
+# apply local histogram equalization
+def local_histogram_equalization(image):
+    kernel = morp.disk(30)
+    img_local = rank.equalize(image, selem=kernel)
+    return img_local
+
+
+X_test = np.array(list(map(local_histogram_equalization, X_test)))
 
 # normalize data from 0.0 to 1.0
 X_test = X_test.astype('float32') / 255

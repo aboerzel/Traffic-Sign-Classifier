@@ -4,6 +4,8 @@ import pickle
 import cv2
 import keras
 import numpy as np
+import skimage.morphology as morp
+from skimage.filters import rank
 from keras.models import load_model
 
 # hyperparameter for evaluation
@@ -45,6 +47,16 @@ def to_grayscale(images):
 
 
 X_test = to_grayscale(X_test)
+
+
+# apply local histogram equalization
+def local_histogram_equalization(image):
+    kernel = morp.disk(30)
+    img_local = rank.equalize(image, selem=kernel)
+    return img_local
+
+
+X_test = np.array(list(map(local_histogram_equalization, X_test)))
 
 # convert class vector to binary class matrix.
 y_test = keras.utils.to_categorical(y_test, num_classes)
