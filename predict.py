@@ -1,11 +1,13 @@
 import csv
 import glob
-import os
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 from keras.models import load_model
-import matplotlib.pyplot as plt
+
+# hyperparameter for evaluation
+optimizer_method = 'sdg'
 
 
 # load class-ids and sign names from csv file
@@ -23,8 +25,9 @@ def load_signnames_from_csv(filename):
 
 
 sign_names = load_signnames_from_csv('signnames.csv')
+num_classes = len(sign_names)
 
-# read image file an preprocess images
+# read and preprocess test images
 original_images = []
 X_test = []
 filenames = glob.glob('./test_images/*.jpg')
@@ -32,14 +35,17 @@ for filename in filenames:
     image = cv2.imread(filename)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     original_images.append(image)
-    resized_image = cv2.resize(image, (32, 32), interpolation=cv2.INTER_AREA)
+    gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    resized_image = cv2.resize(gray_img, (32, 32), interpolation=cv2.INTER_AREA).reshape(32, 32, 1)
     X_test.append(resized_image)
 
 X_test = np.array(X_test)
+
+# normalize data from 0.0 to 1.0
 X_test = X_test.astype('float32') / 255
 
-# load traind model
-model = load_model('./output/traffic_sings_model.h5')
+# load trained model
+model = load_model('./output/traffic_sings_model_{}.h5'.format(optimizer_method))
 
 # predict
 y_pred = model.predict(X_test)

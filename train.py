@@ -15,7 +15,7 @@ from keras.layers.core import Flatten
 from keras.models import Sequential
 from keras.optimizers import SGD, Adam, RMSprop, Adagrad, Adadelta
 
-# training hyperparameter
+# hyperparameter for training
 batch_size = 64
 num_epochs = 100
 optimizer_method = 'sdg'
@@ -172,7 +172,7 @@ X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
 X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
 X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
 
-# normalize date from 0.0 to 1.0
+# normalize data from 0.0 to 1.0
 x_train = X_train.astype('float32') / 255
 X_valid = X_valid.astype('float32') / 255
 X_test = X_test.astype('float32') / 255
@@ -228,5 +228,5 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend()
-plt.savefig('./output/training-loss-and-accuracy.png')
+plt.savefig('./output/training-loss-and-accuracy_{}.png'.format(optimizer_method))
 plt.show()
