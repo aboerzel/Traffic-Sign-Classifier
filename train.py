@@ -31,7 +31,7 @@ class LeNet:
 
         # Layer 1
         # Conv Layer 1 => 28x28x6
-        model.add(Conv2D(filters=6, kernel_size=5, strides=1, activation='relu', input_shape=(32, 32, 1)))
+        model.add(Conv2D(filters=6, kernel_size=5, strides=1, activation='relu', input_shape=(32, 32, 3)))
 
         # Layer 2
         # Pooling Layer 1 => 14x14x6
@@ -76,7 +76,7 @@ class MiniVGGNet:
         chanDim = -1
 
         # first CONV => RELU => CONV => RELU => POOL layer set
-        model.add(Conv2D(32, (3, 3), padding="same", input_shape=(32, 32, 1)))
+        model.add(Conv2D(32, (3, 3), padding="same", input_shape=(32, 32, 3)))
         model.add(Activation("relu"))
         model.add(BatchNormalization(axis=chanDim))
         model.add(Conv2D(32, (3, 3), padding="same"))
@@ -174,9 +174,9 @@ def to_grayscale(images):
     return np.array(result)
 
 
-X_train = to_grayscale(X_train)
-X_valid = to_grayscale(X_valid)
-X_test = to_grayscale(X_test)
+#X_train = to_grayscale(X_train)
+#X_valid = to_grayscale(X_valid)
+#X_test = to_grayscale(X_test)
 
 
 # apply local histogram equalization
@@ -202,9 +202,9 @@ p.rotate(probability=0.8, max_left_rotation=15, max_right_rotation=15)
 p.skew(probability=0.8, magnitude=0.2)
 
 # adapt data to the network input
-X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
-X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
-X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
+#X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
+#X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
+#X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
 
 # normalize data from 0.0 to 1.0
 # don't normalize X_train, because this is already done by batch normalization
