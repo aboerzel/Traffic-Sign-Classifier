@@ -174,9 +174,9 @@ def to_grayscale(images):
     return np.array(result)
 
 
-#X_train = to_grayscale(X_train)
-#X_valid = to_grayscale(X_valid)
-#X_test = to_grayscale(X_test)
+# X_train = to_grayscale(X_train)
+# X_valid = to_grayscale(X_valid)
+# X_test = to_grayscale(X_test)
 
 
 # apply local histogram equalization
@@ -202,9 +202,9 @@ p.rotate(probability=0.8, max_left_rotation=15, max_right_rotation=15)
 p.skew(probability=0.8, magnitude=0.2)
 
 # adapt data to the network input (only needed for grayscale images)
-#X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
-#X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
-#X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
+# X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
+# X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
+# X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
 
 # normalize data between 0.0 and 1.0
 # don't normalize X_train, because this is already done by batch normalization
@@ -275,7 +275,7 @@ class TrainingPlot(keras.callbacks.Callback):
 def get_callbacks(optimizer_method):
     model_filepath = './output/traffic_sings_model_{}.h5'.format(optimizer_method)
     callbacks = [
-        TrainingPlot(),
+        # TrainingPlot(),
         EarlyStopping(monitor='loss', min_delta=0, patience=5, mode='auto', verbose=1),
         ModelCheckpoint(model_filepath, save_best_only=True, verbose=1),
         ReduceLROnPlateau(monitor='loss', factor=0.1, patience=2, verbose=1, mode='auto', epsilon=1e-4, cooldown=0,
