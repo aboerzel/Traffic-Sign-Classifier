@@ -166,9 +166,9 @@ def local_histogram_equalization(image):
     return img_local
 
 
-X_train = np.array(list(map(local_histogram_equalization, X_train)))
-X_valid = np.array(list(map(local_histogram_equalization, X_valid)))
-X_test = np.array(list(map(local_histogram_equalization, X_test)))
+# X_train = np.array(list(map(local_histogram_equalization, X_train)))
+# X_valid = np.array(list(map(local_histogram_equalization, X_valid)))
+# X_test = np.array(list(map(local_histogram_equalization, X_test)))
 
 # convert class vectors to binary class matrices.
 y_train = keras.utils.to_categorical(y_train, num_classes)
@@ -181,13 +181,14 @@ p.zoom(probability=0.8, min_factor=0.8, max_factor=1.2)
 p.rotate(probability=0.8, max_left_rotation=15, max_right_rotation=15)
 p.skew(probability=0.8, magnitude=0.2)
 
-# reshape data for training with LeNet
+# adapt data to the network input
 X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
 X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
 X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
 
 # normalize data from 0.0 to 1.0
-X_train = X_train.astype('float32') / 255
+# don't normalize X_train, because this is already done by batch normalization
+# X_train = X_train.astype('float32') / 255
 X_valid = X_valid.astype('float32') / 255
 X_test = X_test.astype('float32') / 255
 
@@ -196,7 +197,7 @@ datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
 
 def get_optimizer(optimizer_method):
     if optimizer_method == "sdg":
-        return SGD(lr=1e-2, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)
+        return SGD(lr=1e-3, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)
     if optimizer_method == "rmsprop":
         return RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
     if optimizer_method == "adam":
@@ -208,9 +209,53 @@ def get_optimizer(optimizer_method):
         return Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0)
 
 
+# https://medium.com/algoscale/how-to-plot-the-model-training-in-keras-using-custom-callback-function-and-using-tensorboard-41e4ce3cb401
+class TrainingPlot(keras.callbacks.Callback):
+
+    # This function is called when the training begins
+    def on_train_begin(self, logs={}):
+        # Initialize the lists for holding the logs, losses and accuracies
+        self.losses = []
+        self.acc = []
+        self.val_losses = []
+        self.val_acc = []
+        self.logs = []
+
+    # This function is called at the end of each epoch
+    def on_epoch_end(self, epoch, logs={}):
+        # Append the logs, losses and accuracies to the lists
+        self.logs.append(logs)
+        self.losses.append(logs.get('loss'))
+        self.acc.append(logs.get('acc'))
+        self.val_losses.append(logs.get('val_loss'))
+        self.val_acc.append(logs.get('val_acc'))
+
+        # Before plotting ensure at least 2 epochs have passed
+        if len(self.losses) > 1:
+            N = np.arange(0, len(self.losses))
+            # You can chose the style of your preference
+            # print(plt.style.available) to see the available options
+            # plt.style.use("seaborn")
+            # Plot train loss, train acc, val loss and val acc against epochs passed
+            plt.figure()
+            plt.plot(N, self.losses, label="train_loss")
+            plt.plot(N, self.acc, label="train_acc")
+            plt.plot(N, self.val_losses, label="val_loss")
+            plt.plot(N, self.val_acc, label="val_acc")
+            plt.title("Training Loss and Accuracy [Epoch {}]".format(epoch))
+            plt.xlabel("Epoch #")
+            plt.ylabel("Loss/Accuracy")
+            plt.legend()
+            # Make sure there exists a folder called output in the current directory
+            # or replace 'output' with whatever direcory you want to put in the plots
+            plt.savefig('output/Epoch-{}.png'.format(epoch))
+            plt.close()
+
+
 def get_callbacks(optimizer_method):
     model_filepath = './output/traffic_sings_model_{}.h5'.format(optimizer_method)
     callbacks = [
+        TrainingPlot(),
         EarlyStopping(monitor='loss', min_delta=0, patience=5, mode='auto', verbose=1),
         ModelCheckpoint(model_filepath, save_best_only=True, verbose=1),
         ReduceLROnPlateau(monitor='loss', factor=0.1, patience=2, verbose=1, mode='auto', epsilon=1e-4, cooldown=0,
@@ -234,7 +279,7 @@ def plot_train_history(H):
 
 
 # build model
-model = LeNet.build(num_classes)
+model = MiniVGGNet.build(num_classes)
 
 # the function to optimize is the cross entropy between the true label and the output (softmax) of the model
 model.compile(optimizer=get_optimizer(optimizer_method), loss='categorical_crossentropy', metrics=['accuracy'])
