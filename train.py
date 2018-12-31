@@ -161,7 +161,9 @@ def equalize_images_per_class(data, labels, num_classes, threshold):
     return np.array(images), np.array(classes)
 
 
-X_train, y_train = equalize_images_per_class(X_train, y_train, num_classes, 540)
+hist, bins = np.histogram(y_train, bins=num_classes)
+median = np.median(hist)
+X_train, y_train = equalize_images_per_class(X_train, y_train, num_classes, median)
 
 
 # convert images to grayscale
