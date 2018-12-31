@@ -162,7 +162,7 @@ def equalize_images_per_class(data, labels, num_classes, threshold):
 
 
 hist, bins = np.histogram(y_train, bins=num_classes)
-median = np.median(hist)
+median = int(np.median(hist))
 X_train, y_train = equalize_images_per_class(X_train, y_train, num_classes, median)
 
 
