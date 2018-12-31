@@ -146,6 +146,24 @@ X_valid, y_valid = valid['features'], valid['labels']
 X_test, y_test = test['features'], test['labels']
 
 
+# cut number of images per class to the median number images per class
+def equalize_images_per_class(data, labels, num_classes, threshold):
+    images = []
+    classes = []
+    for class_id in range(0, num_classes):
+        group = data[labels == class_id]
+        if len(group) > threshold:
+            group = group[:threshold]
+
+        for image in group:
+            images.append(image)
+            classes.append(class_id)
+    return np.array(images), np.array(classes)
+
+
+X_train, y_train = equalize_images_per_class(X_train, y_train, num_classes, 540)
+
+
 # convert images to grayscale
 def to_grayscale(images):
     result = []
