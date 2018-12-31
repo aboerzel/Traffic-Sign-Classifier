@@ -46,7 +46,7 @@ def to_grayscale(images):
     return np.array(result)
 
 
-X_test = to_grayscale(X_test)
+#X_test = to_grayscale(X_test)
 
 
 # apply local histogram equalization
@@ -56,15 +56,15 @@ def local_histogram_equalization(image):
     return img_local
 
 
-X_test = np.array(list(map(local_histogram_equalization, X_test)))
+#X_test = np.array(list(map(local_histogram_equalization, X_test)))
 
 # convert class vector to binary class matrix.
 y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # reshape data for training with LeNet
-X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
+#X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
 
-# normalize data from 0.0 to 1.0
+# normalize data between 0.0 and 1.0
 X_test = X_test.astype('float32') / 255
 
 # load trained model

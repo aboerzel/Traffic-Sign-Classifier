@@ -35,13 +35,13 @@ for filename in filenames:
     image = cv2.imread(filename)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     original_images.append(image)
-    gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    resized_image = cv2.resize(gray_img, (32, 32), interpolation=cv2.INTER_AREA).reshape(32, 32, 1)
+    #gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    resized_image = cv2.resize(image, (32, 32), interpolation=cv2.INTER_AREA)
     X_test.append(resized_image)
 
 X_test = np.array(X_test)
 
-# normalize data from 0.0 to 1.0
+# normalize data between 0.0 and 1.0
 X_test = X_test.astype('float32') / 255
 
 # load trained model
