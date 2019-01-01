@@ -68,7 +68,7 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 X_test = X_test.astype('float32') / 255
 
 # load trained model
-model = load_model('./output/traffic_sings_model_{}.h5'.format(optimizer_method))
+model = load_model('./output/traffic_signs_model_{}.h5'.format(optimizer_method))
 
 # print loss and accuracy of the trained model
 loss, acc = model.evaluate(X_test, y_test, batch_size=64)

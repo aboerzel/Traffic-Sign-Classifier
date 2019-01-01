@@ -35,7 +35,7 @@ for filename in filenames:
     image = cv2.imread(filename)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     original_images.append(image)
-    #gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     resized_image = cv2.resize(image, (32, 32), interpolation=cv2.INTER_AREA)
     X_test.append(resized_image)
 
@@ -45,7 +45,7 @@ X_test = np.array(X_test)
 X_test = X_test.astype('float32') / 255
 
 # load trained model
-model = load_model('./output/traffic_sings_model_{}.h5'.format(optimizer_method))
+model = load_model('./output/traffic_signs_model_{}.h5'.format(optimizer_method))
 
 # predict
 y_pred = model.predict(X_test)
