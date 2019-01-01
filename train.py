@@ -143,7 +143,6 @@ with open(testing_file, mode='rb') as f:
 
 X_train, y_train = train['features'], train['labels']
 X_valid, y_valid = valid['features'], valid['labels']
-X_test, y_test = test['features'], test['labels']
 
 
 # cut number of images per class to the median number images per class
@@ -176,7 +175,6 @@ def to_grayscale(images):
 
 # X_train = to_grayscale(X_train)
 # X_valid = to_grayscale(X_valid)
-# X_test = to_grayscale(X_test)
 
 
 # apply local histogram equalization
@@ -188,29 +186,25 @@ def local_histogram_equalization(image):
 
 # X_train = np.array(list(map(local_histogram_equalization, X_train)))
 # X_valid = np.array(list(map(local_histogram_equalization, X_valid)))
-# X_test = np.array(list(map(local_histogram_equalization, X_test)))
 
 # convert class vectors to binary class matrices.
 y_train = keras.utils.to_categorical(y_train, num_classes)
 y_valid = keras.utils.to_categorical(y_valid, num_classes)
-y_test = keras.utils.to_categorical(y_test, num_classes)
+
+# adapt data to the network input (only needed for grayscale images)
+# X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
+# X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
+
+# normalize data between 0.0 and 1.0
+# don't normalize X_train, because this is already done by the augmentation
+#X_train = X_train.astype('float32') / 255
+X_valid = X_valid.astype('float32') / 255
 
 # image augmentation (https://augmentor.readthedocs.io/en/master/)
 p = Augmentor.Pipeline()
 p.zoom(probability=0.8, min_factor=0.8, max_factor=1.2)
 p.rotate(probability=0.8, max_left_rotation=15, max_right_rotation=15)
 p.skew(probability=0.8, magnitude=0.2)
-
-# adapt data to the network input (only needed for grayscale images)
-# X_train = X_train.reshape((X_train.shape[0], 32, 32, 1))
-# X_valid = X_valid.reshape((X_valid.shape[0], 32, 32, 1))
-# X_test = X_test.reshape((X_test.shape[0], 32, 32, 1))
-
-# normalize data between 0.0 and 1.0
-# don't normalize X_train, because this is already done by batch normalization
-# X_train = X_train.astype('float32') / 255
-X_valid = X_valid.astype('float32') / 255
-X_test = X_test.astype('float32') / 255
 
 datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
 
@@ -273,7 +267,7 @@ class TrainingPlot(keras.callbacks.Callback):
 
 
 def get_callbacks(optimizer_method):
-    model_filepath = './output/traffic_sings_model_{}.h5'.format(optimizer_method)
+    model_filepath = './output/traffic_signs_model_{}.h5'.format(optimizer_method)
     callbacks = [
         # TrainingPlot(),
         EarlyStopping(monitor='loss', min_delta=0, patience=5, mode='auto', verbose=1),
