@@ -20,7 +20,7 @@ from keras.optimizers import SGD, Adam, RMSprop, Adagrad, Adadelta
 # hyperparameter for training
 batch_size = 64
 num_epochs = 100
-optimizer_method = 'sdg'
+optimizer_method = 'rmsprop'
 
 
 # LeNet model architecture
@@ -197,7 +197,7 @@ y_valid = keras.utils.to_categorical(y_valid, num_classes)
 
 # normalize data between 0.0 and 1.0
 # don't normalize X_train, because this is already done by the augmentation
-#X_train = X_train.astype('float32') / 255
+# X_train = X_train.astype('float32') / 255
 X_valid = X_valid.astype('float32') / 255
 
 # image augmentation (https://augmentor.readthedocs.io/en/master/)
@@ -211,7 +211,7 @@ datagen = p.keras_generator_from_array(X_train, y_train, batch_size=batch_size)
 
 def get_optimizer(optimizer_method):
     if optimizer_method == "sdg":
-        return SGD(lr=1e-3, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5)
+        return SGD(lr=1e-3, decay=1e-6, momentum=0.9, nesterov=True)
     if optimizer_method == "rmsprop":
         return RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
     if optimizer_method == "adam":

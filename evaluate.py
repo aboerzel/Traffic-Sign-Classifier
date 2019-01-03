@@ -9,7 +9,7 @@ from skimage.filters import rank
 from keras.models import load_model
 
 # hyperparameter for evaluation
-optimizer_method = 'sdg'
+optimizer_method = 'rmsprop'
 
 
 # load class-ids and sign names from csv file
