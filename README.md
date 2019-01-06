@@ -142,7 +142,6 @@ If a well known architecture was chosen:
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
 
-![alt text][confusion_matrix]
 
 ![alt text][confusion_matrix]
 
