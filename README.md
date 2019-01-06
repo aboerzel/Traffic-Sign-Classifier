@@ -15,14 +15,16 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[class_distribution_1]: ./examples/class_distribution_1.png "class_distribution_1"
+[class_distribution_2]: ./examples/class_distribution_2.png "class_distribution_2"
+[train_dataset]: ./examples/train_dataset.png "train_dataset"
+[train_dataset_grayscaled]: ./examples/train_dataset_grayscaled.png "train_dataset_grayscaled"
+[train_dataset_equalized]: ./examples/train_dataset_equalized.png "train_dataset_equalized"
+[train_dataset_augmented]: ./examples/train_dataset_augmented.png "train_dataset_augmented"
+[test_images_predictions]: ./examples/test_images_predictions.png "test_images_predictions"
+[top-5-predictions]: ./examples/top-5-predictions.png "top-5-predictions"
+[activation_map_visualization]: ./examples/activation_map_visualization.png "activation_map_visualization"
+
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -47,7 +49,12 @@ signs data set:
 
 Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
 
-![alt text][image1]
+![alt text][class_distribution_1]
+
+![alt text][class_distribution_2]
+
+
+![alt text][train_dataset]
 
 ### Design and Test a Model Architecture
 
@@ -57,7 +64,9 @@ As a first step, I decided to convert the images to grayscale because ...
 
 Here is an example of a traffic sign image before and after grayscaling.
 
-![alt text][image2]
+![alt text][train_dataset_grayscaled]
+
+![alt text][train_dataset_equalized]
 
 As a last step, I normalized the image data because ...
 
@@ -67,7 +76,7 @@ To add more data to the the data set, I used the following techniques because ..
 
 Here is an example of an original image and an augmented image:
 
-![alt text][image3]
+![alt text][train_dataset_augmented]
 
 The difference between the original data set and the augmented data set is the following ... 
 
@@ -142,15 +151,7 @@ The first image might be difficult to classify because ...
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 Here are the results of the prediction:
-
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
-
+![alt text][test_images_predictions]
 
 The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
 
@@ -160,18 +161,11 @@ The code for making predictions on my final model is located in the 11th cell of
 
 For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
-
+![alt text][top-5-predictions]
 
 For the second image ... 
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
-
+![alt text][activation_map_visualization]
