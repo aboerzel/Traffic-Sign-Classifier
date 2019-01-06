@@ -21,30 +21,12 @@ The goals / steps of this project are the following:
 [train_dataset_grayscaled]: ./examples/train_dataset_grayscaled.png "train_dataset_grayscaled"
 [train_dataset_equalized]: ./examples/train_dataset_equalized.png "train_dataset_equalized"
 [train_dataset_augmented]: ./examples/train_dataset_augmented.png "train_dataset_augmented"
+[test_images]: ./examples/test_images.png "test_images"
 [test_images_predictions]: ./examples/test_images_predictions.png "test_images_predictions"
 [top-5-predictions]: ./examples/top-5-predictions.png "top-5-predictions"
-[activation_map_visualization]: ./examples/Layer.png "activation_map_visualization"
-
-[image1]: ./test_images/image1.jpg "image1"
-[image2]: ./test_images/image2.jpg "image2"
-[image3]: ./test_images/image3.jpg "image3"
-[image4]: ./test_images/image4.jpg "image4"
-[image5]: ./test_images/image5.jpg "image5"
-[image6]: ./test_images/image6.jpg "image6"
-[image7]: ./test_images/image7.jpg "image7"
-[image8]: ./test_images/image8.jpg "image8"
-[image9]: ./test_images/image9.jpg "image9"
-[image10]: ./test_images/image10.jpg "image10"
-[image11]: ./test_images/image11.jpg "image11"
-[image12]: ./test_images/image12.jpg "image12"
-[image13]: ./test_images/image13.jpg "image13"
-[image14]: ./test_images/image14.jpg "image14"
-[image15]: ./test_images/image11.jpg "image15"
-[image16]: ./test_images/image11.jpg "image16"
-[image17]: ./test_images/image11.jpg "image17"
-[image18]: ./test_images/image11.jpg "image18"
-[image19]: ./test_images/image11.jpg "image19"
-[image20]: ./test_images/image11.jpg "image20"
+[activation_map_visualization]: ./examples/activation_map_visualization.png "activation_map_visualization"
+[vggnet_training_history]: ./examples/training-loss-and-accuracy_vggnet_rmsprop.png "vggnet_training_history"
+[confusion_matrix]: ./examples/confusion_matrix.png "confusion_matrix"
 
 
 ## Rubric Points
@@ -145,6 +127,9 @@ My final model results were:
 * validation set accuracy of 97.30%
 * test set accuracy of 94.66%
 
+![alt text][vggnet_training_history]
+
+
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
 * What were some problems with the initial architecture?
@@ -156,7 +141,11 @@ If a well known architecture was chosen:
 * What architecture was chosen?
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+
+![alt text][confusion_matrix]
+
+![alt text][confusion_matrix]
+
 
 ### Test a Model on New Images
 
@@ -164,8 +153,7 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][test_images]
 
 The first image might be difficult to classify because ...
 
