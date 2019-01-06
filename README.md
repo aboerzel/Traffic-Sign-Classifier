@@ -15,6 +15,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
+[class_labels]: ./examples/class_labels.png "class_labels"
 [class_distribution_1]: ./examples/class_distribution_1.png "class_distribution_1"
 [class_distribution_2]: ./examples/class_distribution_2.png "class_distribution_2"
 [train_dataset]: ./examples/train_dataset.png "train_dataset"
@@ -47,6 +48,8 @@ signs data set:
 * The size of test set is 12630
 * The shape of a traffic sign image is (32, 32, 3)
 * The number of unique classes/labels in the data set is 43
+
+![alt text][class_labels]
 
 #### 2. Include an exploratory visualization of the dataset.
 
