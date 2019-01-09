@@ -129,7 +129,7 @@ LeNet-5 is a convolutional network designed for handwritten and machine-printed 
 LeNet Architecture:
 ![LeNet Architecture](examples/LeNet-architecture.png)
 
-With the LeNet-5 architecture I got a value accuracy od 91.25% and test accuracy of 88.84%. However, this result is below the requirement!
+With the LeNet-5 architecture I got a value accuracy of 91.25% and test accuracy of 88.84%. However, this result is below the requirement!
 
 
 In order to improve the weak result obtained with the LeNet model, I use a variant of the VGGNet architecture from the book [Deep Learning for Computer Vision](https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/) of [Adrian Rosebrock](https://www.pyimagesearch.com/author/adrian/), called MiniVGGNet. This follows the same architectural pattern as the origial VGGNet architecture, but has significantly fewer layers.
