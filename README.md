@@ -33,10 +33,12 @@ The goals / steps of this project are the following:
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
+#### Files submitted:
+* [README.md](README.md) You’re reading it!
+* The [jupyter notebook](Traffic_Sign_Classifier.ipynb) with code
+* [HTML output](Traffic_Sign_Classifier.html) of the code
 ---
 ### Writeup / README
-
-You're reading it! and here is a link to my [Traffic_Sign_Classifier.ipynb](Traffic_Sign_Classifier.ipynb)
 
 ### Data Set Summary & Exploration
 
@@ -49,47 +51,97 @@ signs data set:
 * The shape of a traffic sign image is (32, 32, 3)
 * The number of unique classes/labels in the data set is 43
 
+I used the csv library to load the traffic sign names from `signnames.csv`. The names will be needed later to display the descriptive names of the traffic signs instead of the class IDs.
+
 ![alt text][class_labels]
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+First, I examined how often each class is represented in the dataset. The easiest way is to use a histogram of the number of images in each unique class.
 
 ![alt text][class_distribution_1]
 
+If the classes in the dataset are represented very differently, the classes that are represented more frequently are preferred in the classification. However, this should be avoided, therefore each class in the training data set should be represented by an approximately equal number of images.
+
+The histogram above shows that classes are very differently represented, which adversely affects predictive accuracy. Normally, it would be better to supplement the weakly represented classes with more pictures until the number of pictures per class is about the same. But for that we would need a lot more pictures of traffic signs. Therefore I decided to cut the items per class of the training dataset at the median number of images per class.
+
+The distribution is still not optimal, but much better than before. Unfortunately, some classes are very poorly represented, but it makes no sense to use even fewer images because as a rule of thumb you should have at least 1000 images per class to get a good trainig result.
+
+I trained and tested the network once with and once without adjusting the number of pictures. Although I achieved better training and validation results without the adjustment, the network worked better with the alignment during the test.
+
 ![alt text][class_distribution_2]
 
+Next, let's look at the pictures of the dataset. The following diagram shows ten randomly selected images of each class in the training dataset.
 
 ![alt text][train_dataset]
 
 ### Design and Test a Model Architecture
 
-#### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
+#### Image Preprocessing
 
-As a first step, I decided to convert the images to grayscale because ...
+In this step I tested some preprocessing techniques like grayscaling and local histogram equalization.
 
-Here is an example of a traffic sign image before and after grayscaling.
+I trained and tested my network with and without grayscale images respectively local histogram equalization. With grayscale images and histogram equalization, I could achieve better training results, but in the recognition of real images from the Internet I have achieved better results when I use color images. Finally I decided to use color images for this project.
 
+**Grayscaling**
+
+For many classification problems, the colors play little role, just shapes and edges, etc. In these cases, it may be helpful to use grayscale images instead of color images. Especially with large datasets, this speeds up the training process and can also have a positive effect on the achieved accuracy.
+
+The following diagram shows the images of the training dataset as grayscale images.
 ![alt text][train_dataset_grayscaled]
 
+**Local Histogram Equalization**
+
+This technique simply distributes the most common intensity values in an image, improving low-contrast images. 
 ![alt text][train_dataset_equalized]
 
-As a last step, I normalized the image data because ...
+#### Image Augmentation
 
-I decided to generate additional data because ... 
+Image augmentation is a great technique for artificially propagating images of a dataset by duplicating existing images through random manipulations such as scaling, rotation, tilt, noise, ect.
 
-To add more data to the the data set, I used the following techniques because ... 
+This can be done either by hand by building an augmentation pipeline, analogous to a preprocessing pipeline, which makes the appropriate manipulations. For example, OpenCV offers numerous functions for image manipulation.
 
-Here is an example of an original image and an augmented image:
+But I prefer to use ready-made libraries like `imgaug` or ` augmentor`. Here the augmentation pipeline will be described declaratively, which is very clear. For this project I use `augmentor`, see https://augmentor.readthedocs.io/en/master/. The augmentor delivers already normalized images, so that the normalization by the image preprocessing is dropped.
 
+I used the following methods in my augmentation pipeline:
+
+* Zoom: I use random zoom between factor 0.8 and 1.2 to simulate different distances from the camera to the signs. 
+* Rotate: I use a random of +/- 15 degree rotation to simulate signs that appear slightly rotated.
+* Skew: I use a random horizontal respectively vertical tilt to simulate different camera perspectives on traffic signs.
+
+The final augmentation pipeline delivers images like these:
 ![alt text][train_dataset_augmented]
-
-The difference between the original data set and the augmented data set is the following ... 
-
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
-My final model consisted of the following layers:
+Goal of the project is to design and train a model that achieves an accuracy of 93% or greater, on the validation set. In this step, I designed and tested a model architecture to achieve this goal.
+
+Why do I use Keras?
+
+[Keras](https://keras.io/) encapsulates some popular deep learning frameworks, such as [TensorFlow](https://github.com/tensorflow/tensorflow), [CNTK](https://github.com/Microsoft/cntk), or [Theano](https://github.com/Theano/Theano), in a single, streamlined and easy-to-understand API. In my opinion, network architectures and training processes in Keras are much easier to understand, because the Keras API is limited to the essentials and uses a strongly declarative approach. In addition, Keras makes it easy to switch between the different deep learning frameworks without much code customization.
+
+Since I'm already familiar with Keras and because I love Keras' streamlined API, I've decided to use Keras for the project. But notice, that I use TensorFlow as backend under the hood!
+
+First, I tried the LeNet-5 architecture that was used in the classroom examples.
+
+LeNet-5 is a convolutional network designed for handwritten and machine-printed character recognition. It was introduced by the [Yann LeCun](https://en.wikipedia.org/wiki/Yann_LeCun) in his paper [Gradient-Based Learning Applied to Document Recognition](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf) in 1998. We can also use the LeNet architecture to classify traffic signs.
+
+LeNet Architecture:
+![LeNet Architecture](examples/LeNet-architecture.png)
+
+With the LeNet-5 architecture I got a value accuracy od 91.25% and test accuracy of 88.84%. However, this result is below the requirement.
+
+
+In order to improve the weak result obtained with the LeNet model, I use a variant of the VGGNet architecture from the book [Deep Learning for Computer Vision](https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/) of [Adrian Rosebrock](https://www.pyimagesearch.com/author/adrian/), called MiniVGGNet. This follows the same architectural pattern as the origial VGGNet architecture, but has significantly fewer layers.
+
+The VGG network architecture was introduced by Simonyan and Zisserman in their 2014 paper, [Very Deep Convolutional Networks for Large Scale Image Recognition](https://arxiv.org/abs/1409.1556). It is one of the highest performing Convolutional Neural Networks on the [ImageNet challenge](http://image-net.org/challenges/LSVRC/) over the past few years.
+
+VGGNet Architecture:
+![VGGNet Architecture](examples/VGG-16-Model-Architecture.png.jpg)
+
+This network is characterized by its simplicity, using only 3×3 convolutional layers stacked on top of each other in increasing depth. Reducing volume size is handled by max pooling. Two fully-connected layers, each with 4,096 nodes are then followed by a softmax classifier.
+
+Finally, I use the MiniVGGNet model, which consisted of the following layers:
 
 | Layer         		|     Description	        		                			| 
 |:---------------------:|:-------------------------------------------------------------:| 
@@ -117,35 +169,40 @@ My final model consisted of the following layers:
 | Fully connected		| outputs 43                									|
 | Softmax				| outputs 43                									|
 
- 
 
 #### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an ....
+**Hyperparameter**
 
-#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+I tried the three optimization methods `sdg`, `adam` and `rmsprop`. With `rmsprop` I got significant better results than with the others, so I finally use the `rmsprop` optimization method.
+I also use a batch_size of 256 and a number of 100 epochs.
+
+To control the training process I use the following 3 Keras callback methods:
+
+* EarlyStopping: Stops the training process prematurely if no improvement has been achieved for several consecutive epochs.
+
+* ModelCheckpoint:
+Saves the best model ever learned after each epoch.
+
+* ReduceLROnPlateau:
+Automatically reduces the learning rate if no improvement has been achieved over several epochs. The initial lerning rate starts by 0.001.
 
 My final model results were:
 * training set accuracy of 99.66%
 * validation set accuracy of 97.30%
 * test set accuracy of 94.66%
 
+**Training History**
+
 ![alt text][vggnet_training_history]
 
+**Confusion Matrix**
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+A confusion matrix is a summary of prediction results on a classification problem.
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+The number of correct and incorrect predictions are summarized with count values and broken down by each class. The confusion matrix shows in which cases the classification model is confused when it makes predictions.
 
-
+Here is the confusion matrix of the trained MiniVGGNet model calculated with the test data. The confusion matrix shows that the model has very few outliers.
 ![alt text][confusion_matrix]
 
 
