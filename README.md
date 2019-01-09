@@ -229,7 +229,7 @@ The diagram above shows that most classes are clearly recognized. Only in "Speed
 
 ### (Optional) Visualizing the Neural Network
 
-To get a better understanding of how the network sees an image and which features lead to classification, it is useful to visualize the activation maps of the various network layers. The following example visualizes the activation maps for one of the test images. Therefore I used code snippets from https://github.com/philipperemy/keras-activations
+To get a better understanding of how the network sees an image and which features lead to classification, it is useful to visualize the activation maps of the various network layers. The following example visualizes the activation maps for one of the test images. 
 
 ![alt text][activation_map_visualization]
 
