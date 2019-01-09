@@ -206,7 +206,7 @@ Here is the confusion matrix of the trained MiniVGGNet model calculated with the
 ![alt text][confusion_matrix]
 
 
-### Test a Model on New Images
+### Test the Model on New Images
 
 Here are 20 German traffic signs that I found on the web:
 
@@ -218,7 +218,7 @@ And here are the results of the prediction:
 
 The model was able to correctly guess 19 of the 20 traffic signs, which gives an accuracy of 95%. This compares favorably to the accuracy on the test set of 94.66%.
 
-It is noticeable that the misrecognized image should have class 23. This is one of the classes underrepresented in the training data, so this class is disadvantaged in the classification!!
+It is noticeable that the misrecognized image should have class 23 (Slippery road). This is one of the classes underrepresented in the training data, so this class is disadvantaged in the classification!!
 
 
 Top 5 softmax probabilities for each image along with the sign type of each probability:
@@ -232,3 +232,19 @@ The diagram above shows that most classes are clearly recognized. Only in "Speed
 To get a better understanding of how the network sees an image and which features lead to classification, it is useful to visualize the activation maps of the various network layers. The following example visualizes the activation maps for one of the test images. Therefore I used code snippets from https://github.com/philipperemy/keras-activations
 
 ![alt text][activation_map_visualization]
+
+## Conclusion
+
+With a test accuracy of 94.66%, I have achieved a decent result, but for use in real life, this is not enough. To further improve accuracy, the following steps can be taken:
+
+* Improving the Data Set:<br>
+The data set used is not optimal. On the one hand, the number of images per class varies greatly, on the other hand, there are too few images for some classes. This should be corrected urgently. Using a dataset that reflects the real problem is probably the most important factor in successfully building a deep learning model!<br><br>
+* Image Augmentation:<br>
+The image augmentation can also be further improved to better meet the real life conditions. For example, we can simulate horizontal and vertical shifts, partially truncated traffic signs, or picture interference.<br><br>
+* Test futher Network Architectures:<br>
+We can examine other network architectures such as ResNet, Inception or Exception.<br><br>
+* Tunig Hyperparameters:<br>
+The accuracy can also be improved by further tuning the hyperparameters. For this, techniques such as ensembles or cross-validation can be used.
+
+
+However, I think this will not be enough for use on autonomous vehicles. The problem is that with the current solution, we can always assign only one label to a picture, and that the object to be recognized in each case must fill the pictures fairly. However, the camera of a vehicle recognizes the entire environment. One picture can contain many interesting objects such as traffic signs, pedestrians or other vehicles. These can occur multiple times at different positions in the image and scale strongly through the different distances. A simple classification is not sufficient here, we must be able to recognize different objects in a picture and also to locate them, even if objects of a class exist several times. For this we can investigate networks such as SSD, Faster R-CNN or YOLO.
