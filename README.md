@@ -129,7 +129,7 @@ LeNet-5 is a convolutional network designed for handwritten and machine-printed 
 LeNet Architecture:
 ![LeNet Architecture](examples/LeNet-architecture.png)
 
-With the LeNet-5 architecture I got a value accuracy od 91.25% and test accuracy of 88.84%. However, this result is below the requirement.
+With the LeNet-5 architecture I got a value accuracy od 91.25% and test accuracy of 88.84%. However, this result is below the requirement!
 
 
 In order to improve the weak result obtained with the LeNet model, I use a variant of the VGGNet architecture from the book [Deep Learning for Computer Vision](https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/) of [Adrian Rosebrock](https://www.pyimagesearch.com/author/adrian/), called MiniVGGNet. This follows the same architectural pattern as the origial VGGNet architecture, but has significantly fewer layers.
@@ -208,32 +208,27 @@ Here is the confusion matrix of the trained MiniVGGNet model calculated with the
 
 ### Test a Model on New Images
 
-#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
-
-Here are five German traffic signs that I found on the web:
+Here are 20 German traffic signs that I found on the web:
 
 ![alt text][test_images]
 
-The first image might be difficult to classify because ...
+And here are the results of the prediction:
 
-#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
-
-Here are the results of the prediction:
 ![alt text][test_images_predictions]
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 19 of the 20 traffic signs, which gives an accuracy of 95%. This compares favorably to the accuracy on the test set of 94.66%.
 
-#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+It is noticeable that the misrecognized image should have class 23. This is one of the classes underrepresented in the training data, so this class is disadvantaged in the classification!!
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+Top 5 softmax probabilities for each image along with the sign type of each probability:
 
 ![alt text][top-5-predictions]
 
-For the second image ... 
+The diagram above shows that most classes are clearly recognized. Only in "Speed limit (100km/h)" the top 5 predictions are close together. But that is also because the dataset contains  of several classes that are very similar.
 
 ### (Optional) Visualizing the Neural Network
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+
+To get a better understanding of how the network sees an image and which features lead to classification, it is useful to visualize the activation maps of the various network layers. The following example visualizes the activation maps for one of the test images. Therefore I used code snippets from https://github.com/philipperemy/keras-activations
 
 ![alt text][activation_map_visualization]
