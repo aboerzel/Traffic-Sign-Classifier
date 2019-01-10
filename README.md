@@ -67,7 +67,7 @@ The histogram above shows that classes are very differently represented, which a
 
 The distribution is still not optimal, but much better than before. Unfortunately, some classes are very poorly represented, but it makes no sense to use even fewer images because as a rule of thumb you should have at least 1000 images per class to get a good trainig result.
 
-I trained and tested the network once with and once without adjusting the number of pictures. Although I achieved better training and validation results without the adjustment, the network worked better with the alignment during the test.
+I trained and tested the network once with and once without adjusting the number of pictures. Although I achieved better training and validation results without the adjustment, the network worked better with the adjustment during the test.
 
 ![alt text][class_distribution_2]
 
