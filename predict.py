@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from keras.models import load_model
 
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
 # hyperparameter for evaluation
 optimizer_method = 'rmsprop'
 
